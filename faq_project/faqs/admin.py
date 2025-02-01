@@ -3,9 +3,8 @@ from django.utils.html import format_html
 from .models import FAQ
 
 class FAQAdmin(admin.ModelAdmin):
-    list_display = ('question_short', 'language', 'formatted_answer', 'created_at', 'updated_at')
+    list_display = ('question_short', 'formatted_answer', 'created_at', 'updated_at')  # ❌ Removed 'language'
     search_fields = ('question', 'answer')
-    list_filter = ('language',)
     ordering = ('-created_at',)
 
     def question_short(self, obj):
