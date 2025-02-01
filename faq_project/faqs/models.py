@@ -12,14 +12,15 @@ class FAQ(models.Model):
     question = models.TextField()
     answer = RichTextField()  # WYSIWYG editor
     language = models.CharField(max_length=5, choices=LANGUAGE_CHOICES, default='en')
-    created_at = models.DateTimeField(auto_now_add=True)  # New field
-    updated_at = models.DateTimeField(auto_now=True)  # New field
+    created_at = models.DateTimeField(auto_now_add=True)  
+    updated_at = models.DateTimeField(auto_now=True)  
 
     def save(self, *args, **kwargs):
-        if self.language != 'en':  # Translate only non-English FAQs
-            translator = Translator()
-            self.question = translator.translate(self.question, src='en', dest=self.language).text
-            self.answer = translator.translate(self.answer, src='en', dest=self.language).text
+        translator = Translator()
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        translated_text = loop.run_until_complete(translator.translate(self.question, src='en', dest=self.language))
+        self.question = translated_text.text  # Extract translated text properly
         super().save(*args, **kwargs)
 
     def __str__(self):
