@@ -1,0 +1,42 @@
+import pytest
+from unittest.mock import patch
+from django.db import IntegrityError
+from faqs.models import FAQ 
+
+@pytest.mark.django_db
+class TestFAQModel:
+    
+    @patch('googletrans.Translator.translate')
+    def test_faq_save_translation(self, mock_translate):
+        # Mock the translated text returned by the Google Translator
+        mock_translate.return_value.text = "Translated Question"
+        
+        # Create an FAQ instance
+        faq = FAQ.objects.create(
+            question="This is a test question",
+            answer="This is a test answer",
+            language="hi",  # Translate to Hindi
+        )
+        
+        # Save the instance
+        faq.save()
+
+        # Check if the translation is applied correctly
+        assert faq.question == "Translated Question"
+        assert faq.answer == "Translated Question"  # As the same mock is used for both fields
+
+
+    def test_faq_save_without_answer(self):
+        # Test when there is no answer to translate
+        faq = FAQ.objects.create(
+            question="This is a test question",
+            answer="",
+            language="hi",  # Translate to Hindi
+        )
+        
+        # Save the instance
+        faq.save()
+        
+        # The question should be translated, but answer should remain empty
+        assert faq.question != "This is a test question"
+        assert faq.answer == ""  # Answer should remain empty
