@@ -6,7 +6,7 @@ from django.core.cache import cache
 
 @api_view(['GET'])
 def get_faqs(request):
-    lang = request.GET.get('lang', 'en')
+    lang = request.GET.get('lang', 'en') # default language is english
     cache_key = f"faqs_{lang}"
     faqs = cache.get(cache_key)
 
