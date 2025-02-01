@@ -10,8 +10,10 @@ class FAQ(models.Model):
     ]
 
     question = models.TextField()
-    answer = RichTextField()  # WYSIWYG editor support
+    answer = RichTextField()  # WYSIWYG editor
     language = models.CharField(max_length=5, choices=LANGUAGE_CHOICES, default='en')
+    created_at = models.DateTimeField(auto_now_add=True)  # New field
+    updated_at = models.DateTimeField(auto_now=True)  # New field
 
     def save(self, *args, **kwargs):
         if self.language != 'en':  # Translate only non-English FAQs
